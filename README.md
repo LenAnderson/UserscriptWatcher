@@ -8,6 +8,14 @@ groovy script to autmatically compile a collection of files into a userscript
 3. In the `src` directory add a file named `script.js` The UserscriptWatcher will start with this file.
 4. Run UserscriptWatcher.groovy with the path to your userscript's directory as the argument.
 
+### Running UserscriptWatcher.groovy
+```
+UserscriptWatcher.groovy "path/to/My-Script"
+```
+```
+groovy UserscriptWatcher.groovy "path/to/My-Script" "path/to/My-Other-Script"
+```
+
 ### Folder Structure
 ```
 .../Documents/Userscripts/
