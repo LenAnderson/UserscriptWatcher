@@ -47,7 +47,7 @@ To include another file write `${include: path/to/file.extension}` somewhere in 
 - `${include-esc}` will put the contents of that file and escape single and double quotes (`'`, `"`)
 - `${include-b64}` will put the contents of that file as a base64 data string (`data:contentType;base64,...`)
 
-The modifiers (-once, -min, -esc, -b64) can be combined.
+The modifiers (`-once`, `-min`, `-esc`, `-b64`) can be combined, e.g. `${include-once-min: file.js}`.
 
 ##### Example
 
