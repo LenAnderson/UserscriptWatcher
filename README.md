@@ -78,6 +78,6 @@ The modifiers (-once, -min, -esc, -b64) can be combined.
 `css/styles.css`:
 ```
 body {
-    background-image: url("{include-b64: ../img/background.png}");
+    background-image: url("${include-b64: ../img/background.png}");
 }
 ```
