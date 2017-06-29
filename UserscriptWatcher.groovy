@@ -89,7 +89,7 @@ class UserscriptWatcher {
 				File inc = new File("${base.parent}/${match}")
 				String replace = "// !!! CANNOT FIND: ${inc.absolutePath}"
 				if (inc.exists()) {
-					if (options.find{it=="once"} && !includes[root].contains(inc.absolutePath)) {
+					if (!options.find{it=="once"} || !includes[root].contains(inc.absolutePath)) {
 						includes[root] << inc.absolutePath
 						replace = getCompiled(inc, root)
 						if (options.find{it=="min"}) replace = replace.replaceAll(~/[\r\n\t]/, '')
