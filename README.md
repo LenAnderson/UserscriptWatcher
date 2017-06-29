@@ -43,9 +43,9 @@ To include another file write `${include: path/to/file.extension}` somewhere in 
 
 - `${include: file}` will put the contents of that file
 - `${include-once}` will put the contents of that file if it has not been included before
-- `${include-min}` will put the contents of that file and remove all linebreaks and tabstops (\r, \n, \t)
-- `${include-esc}` will put the contents of that file and escape single and double quotes (', ")
-- `${include-b64}` will put the contents of that file as a base64 data string (data:contentType;base64,...)
+- `${include-min}` will put the contents of that file and remove all linebreaks and tabstops (`\r`, `\n`, `\t`)
+- `${include-esc}` will put the contents of that file and escape single and double quotes (`'`, `"`)
+- `${include-b64}` will put the contents of that file as a base64 data string (`data:contentType;base64,...`)
 
 The modifiers (-once, -min, -esc, -b64) can be combined.
 
