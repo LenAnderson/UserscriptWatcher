@@ -81,3 +81,26 @@ body {
     background-image: url("${include-b64: ../img/background.png}");
 }
 ```
+
+## Live updates as the code changes
+To immediately have access to the recompiled userscript during development I usually use the following setup. This way I only need to refresh the page to use the updates userscript.
+
+Have a page on a local webserver (e.g. XAMPP) that takes the path to a script as a GET parameter and then simply returns that files contents.
+```
+<?php
+echo file_get_contents($_GET['script']);
+```
+
+Add a userscript with similar headers that loads the compiled script with `GM_xmlhttpRequest`.
+```
+// ==UserScript==
+// @name         My Script [DEV]
+// @match        https://www.example.com/  <--- must be the same @match as in your userscript
+// @grant        GM_xmlhttpRequest         <--- additionally you must add all the @grant from your userscript
+// ==/UserScript==
+
+(function() {
+    GM_xmlhttpRequest({url: 'http://localhost/userscripts.php?script=C:/Path/to/My-Script/My-Script.user.js', onload: (data) => {
+        eval(data.responseText);
+    }});
+})();
