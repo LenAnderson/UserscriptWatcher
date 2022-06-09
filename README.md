@@ -1,5 +1,5 @@
 # UserscriptWatcher
-groovy script to autmatically compile a collection of files into a userscript
+Groovy script (Groovy 3) to autmatically compile a collection of files into a userscript.
 
 
 ## How to use?
@@ -46,13 +46,15 @@ To include another file write `${include: path/to/file.extension}` somewhere in 
 - `${include-min}` will put the contents of that file and remove all linebreaks and tabstops (`\r`, `\n`, `\t`)
 - `${include-esc}` will put the contents of that file and escape single and double quotes (`'`, `"`)
 - `${include-b64}` will put the contents of that file as a base64 data string (`data:contentType;base64,...`)
+- ES6 module imports are supported as well and will replace `${imports}` in the source file.
+  - `import { SomeThing } from './file.js'
 
 The modifiers (`-once`, `-min`, `-esc`, `-b64`) can be combined, e.g. `${include-once-min: file.js}`.
 
 ##### Example
 
 `script.js`:
-```
+```javascript
 // ==UserScript==
 // @name         My-Script
 // @namespace    https://github.com/LenAnderson/
@@ -63,20 +65,25 @@ The modifiers (`-once`, `-min`, `-esc`, `-b64`) can be combined, e.g. `${include
 // @grant        none
 // ==/UserScript==
 
+import { SomeOtherClass } from ./someFolder/SomeOtherClass.js
+
 (function() {
 	${include-once: PartOne.js}
-	${include-once: PartTwo.js}
+	// you can put the include statements in comments to avoid problems with linting / intellisense
+	// ${include-once: PartTwo.js}
 	
-  let style = document.createElement('style');
-  style.innerHTML = '${include-min-esc: css/styles.css}';
-  document.body.appendChild(style);
-  
-  let sc = new SomeClass(); // SomeClass was included in PartOne.js
+	// ${imports}
+	
+	let style = document.createElement('style');
+	style.innerHTML = '${include-min-esc: css/styles.css}';
+	document.body.appendChild(style);
+	
+	let sc = new SomeClass(); // SomeClass was included in PartOne.js
 })();
 ```
 
 `css/styles.css`:
-```
+```css
 body {
     background-image: url("${include-b64: ../img/background.png}");
 }
