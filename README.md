@@ -65,7 +65,7 @@ The modifiers (`-once`, `-min`, `-esc`, `-b64`) can be combined, e.g. `${include
 // @grant        none
 // ==/UserScript==
 
-import { SomeOtherClass } from ./someFolder/SomeOtherClass.js
+import { SomeOtherClass } from './someFolder/SomeOtherClass.js';
 
 (function() {
 	${include-once: PartOne.js}
