@@ -45,7 +45,7 @@ class UserscriptWatcher {
 				
 				key.pollEvents().each{ event ->
 					def kind = event.kind()
-					println "$kind ${event.context}"
+					println "$kind ${event.context()}"
 					compile(root)
 				}
 				
