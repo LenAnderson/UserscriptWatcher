@@ -38,7 +38,7 @@ class UserscriptWatcher {
 				ExtendedWatchEventModifier.FILE_TREE
 			)
 
-			println "ready"
+			println "\nREADY\n"
 			
 			while (true) {
 				WatchKey key = ws.take()
