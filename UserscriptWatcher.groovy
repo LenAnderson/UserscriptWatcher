@@ -72,7 +72,7 @@ class UserscriptWatcher {
 			def text = ""
 			text += "${match[1]}// ---------------- IMPORTS  ----------------\n"
 			imports.each{ path, content ->
-				text += "\n\n${match[1]}// ${path}\n"
+				text += "\n\n${match[1]}// ${Paths.get(new File(root).canonicalPath).relativize(Paths.get(path))}\n"
 				text += content
 			}
 			text += "${match[1]}// ---------------- /IMPORTS ----------------\n"
