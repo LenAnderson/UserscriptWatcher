@@ -118,7 +118,7 @@ class UserscriptWatcher {
 	}
 	
 	def getCompiled(base, root) {
-		base.text
+		base.getText('UTF-8')
 			.replaceAll(~/(?m)^export /, '')
 			.replaceAll(~/(?m)^import .+? from "([^"]+?)";$/, { str, match ->
 				File inc = new File("${base.parent}/${match}")
