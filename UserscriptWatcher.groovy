@@ -64,8 +64,9 @@ class UserscriptWatcher {
 		}
 		compiling[root] = true
 		
-		def base = new File("$root/src/script.js")
-		def compiled = new File("$root/${new File(root).name}.user.js")
+		def base = new File(new File("$root/src/script.js").canonicalPath)
+		def compiled = new File(new File("$root/${new File(root).name}.user.js").canonicalPath)
+		def compiledDev = new File(new File("$root/${new File(root).name}-DEV.user.js").canonicalPath)
 		
 		includes[base] = []
 		def compiledText = getCompiled(base, base).replaceAll(~/(?m)^(\s*)\/\/\s*\$\{imports\}$/, { str, match ->
@@ -79,6 +80,7 @@ class UserscriptWatcher {
 			return text
 		})
 		compiled.setText(compiledText, 'UTF-8')
+		compiledDev.setText(compiledText.replaceAll(~/(?m)^(\/\/\s*@version\s+).+$/, "\$1${UUID.randomUUID()}"), 'UTF-8')
 		
 		compiling[root] = false
 		if (again[root]) {
@@ -88,15 +90,16 @@ class UserscriptWatcher {
 	}
 	
 	def getCompiled(base, root) {
+		println "getCompiled: $base"
 		base.text
 			.replaceAll(~/(?m)^export /, '')
 			.replaceAll(~/(?m)^import .+? from "([^"]+?)";$/, { str, match ->
-				File inc = new File("${base.parent}/${match}")
+				File inc = new File(new File("${base.parent}/${match}").canonicalPath)
 				String replace = "// !!! CANNOT FIND: ${inc.canonicalPath}"
 				if (inc.exists()) {
 					if (!includes[root].contains(inc.canonicalPath)) {
-						imports[inc.canonicalPath] = getCompiled(inc, root)
 						includes[root] << inc.canonicalPath
+						imports[inc.canonicalPath] = getCompiled(inc, root)
 						replace = ""
 					} else {
 						replace = ""
@@ -105,7 +108,7 @@ class UserscriptWatcher {
 				replace
 			})
 			.replaceAll(~/(?:\s*\/\/\s*)?\$\{include: ([^{}]+)\}/, { str, match ->
-				File inc = new File("${base.parent}/${match}")
+				File inc = new File(new File("${base.parent}/${match}").canonicalPath)
 				String replace = "// !!! CANNOT FIND: ${inc.canonicalPath}"
 				if (inc.exists()) {
 					includes[root] << inc.canonicalPath
@@ -115,7 +118,7 @@ class UserscriptWatcher {
 			})
 			.replaceAll(~/(?:\s*\/\/\s*)?\$\{include-([a-z0-9\-]+): ([^{}]+)\}/, { str, opts, match ->
 				def options = opts.split('-')
-				File inc = new File("${base.parent}/${match}")
+				File inc = new File(new File("${base.parent}/${match}").canonicalPath)
 				String replace = "// !!! CANNOT FIND: ${inc.canonicalPath}"
 				if (inc.exists()) {
 					if (!options.find{it=="once"} || !includes[root].contains(inc.canonicalPath)) {
