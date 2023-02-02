@@ -5,7 +5,35 @@ import com.sun.nio.file.*
 
 class UserscriptWatcher {
 	static main (args) {
-		def uw = new UserscriptWatcher(args)
+		List roots = []
+		Root root
+		args.each{arg->
+			if (arg[0..1] == '--' && root) {
+				String argName = arg[2..-1].split('=', 2)[0]
+				switch (argName) {
+					case 'name':
+						root.name = arg.split('=', 2)[1]
+						break
+				}
+			} else {
+				root = new Root(arg)
+				roots += root
+			}
+		}
+		def uw = new UserscriptWatcher(roots)
+	}
+
+	static class Root {
+		String path
+		String name
+
+		Root(String path) {
+			this.path = path
+		}
+
+		String getName() {
+			name ?: new File(path).name
+		}
 	}
 	
 	
@@ -15,7 +43,7 @@ class UserscriptWatcher {
 	Map imports = [:]
 	Map compiling = [:]
 	Map again = [:]
-	List roots = []
+	List<Root> roots = []
 	
 	UserscriptWatcher(roots) {
 		this.roots = roots
@@ -24,8 +52,10 @@ class UserscriptWatcher {
 	}
 	
 	def initWatcher() {
+		println ""
 		this.roots.each { root ->
-			Path path = Paths.get("${root}/src")
+			println "$root.path  -->  $root.name"
+			Path path = Paths.get("${root.path}/src")
 			WatchService ws = FileSystems.default.newWatchService()
 			
 			path.register(
@@ -64,16 +94,16 @@ class UserscriptWatcher {
 		}
 		compiling[root] = true
 		
-		def base = new File(new File("$root/src/script.js").canonicalPath)
-		def compiled = new File(new File("$root/${new File(root).name}.user.js").canonicalPath)
-		def compiledDev = new File(new File("$root/${new File(root).name}-DEV.user.js").canonicalPath)
+		def base = new File(new File("${root.path}/src/script.js").canonicalPath)
+		def compiled = new File(new File("${root.path}/${root.name}.user.js").canonicalPath)
+		def compiledDev = new File(new File("${root.path}/${root.name}-DEV.user.js").canonicalPath)
 		
 		includes[base] = []
 		def compiledText = getCompiled(base, base).replaceAll(~/(?m)^(\s*)\/\/\s*\$\{imports\}$/, { str, match ->
 			def text = ""
 			text += "${match[1]}// ---------------- IMPORTS  ----------------\n"
 			imports.each{ path, content ->
-				text += "\n\n${match[1]}// ${Paths.get(new File(root).canonicalPath).relativize(Paths.get(path))}\n"
+				text += "\n\n${match[1]}// ${Paths.get(new File(root.path).canonicalPath).relativize(Paths.get(path))}\n"
 				text += content
 			}
 			text += "${match[1]}// ---------------- /IMPORTS ----------------\n"
@@ -91,7 +121,7 @@ class UserscriptWatcher {
 	
 	def getCompiled(base, root) {
 		println "getCompiled: $base"
-		base.text
+		base.getText('UTF-8')
 			.replaceAll(~/(?m)^export /, '')
 			.replaceAll(~/(?m)^import .+? from "([^"]+?)";$/, { str, match ->
 				File inc = new File(new File("${base.parent}/${match}").canonicalPath)

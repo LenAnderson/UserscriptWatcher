@@ -9,11 +9,22 @@ Groovy script (Groovy 3) to autmatically compile a collection of files into a us
 4. Run UserscriptWatcher.groovy with the path to your userscript's directory as the argument.
 
 ### Running UserscriptWatcher.groovy
-```
+```bash
 UserscriptWatcher.groovy "path/to/My-Script"
 ```
-```
+```bash
 groovy UserscriptWatcher.groovy "path/to/My-Script" "path/to/My-Other-Script"
+```
+Specifying the name of the compiled userscript file.
+```bash
+# will compile to My-Script.user.js
+UserscriptWatcher.groovy "path/to/My-Script"
+
+# will compile to my_script.user.js
+UserscriptWatcher.groovy "path/to/My-Script" --name=my_script
+
+# will compile to my_script.user.js and My-Other-Script.user.js
+UserscriptWatcher.groovy "path/to/My-Script" --name=my_script "path/to/My-Other-Script"
 ```
 
 ### Folder Structure
